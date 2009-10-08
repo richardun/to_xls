@@ -65,6 +65,6 @@ In the controller where you want to export to excel, add the format.xls line.
 
 Does not work on a single activerecord, ie, User.first.to_xls.
 
-
+Copyright (C) 2009 Richard Navarrete, released under the MIT license Based on 
 
 Copyright (c) 2009 Ary Djmal, released under the MIT license
