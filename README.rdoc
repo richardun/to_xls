@@ -28,66 +28,67 @@ This Rails plugin is the easiest way to export to Excel. It gives you the abilit
 
 == Options
 
-	options[:columns]	- include as an Array if you want to enforce the order of columns, otherwise will be random since it'll get the columns from a Hash.
-										- these need to be the same as your Hash keys or the values won't come through
-	options[:headers]	- whether or not to include headers
-	options[:upcase]	- whether or not to upcase the column headers
+options[:columns]	- include as an Array if you want to enforce the order of columns, otherwise will be random since it'll get the columns from a Hash. These need to be the same as your Hash keys or the values won't come through
+options[:headers]	- whether or not to include headers
+options[:upcase]	- whether or not to upcase the column headers
+
 
 == Real life example
 	
 In config/initializers/mime_types.rb register the custom mime type.
 
-  Mime::Type.register "application/vnd.ms-excel", :xls	
+Mime::Type.register "application/vnd.ms-excel", :xls	
 	
 	
 In the controller where you want to export to excel, add the format.xls line.
 
-	class UserController < ApplicationController
 
-		def index
-			@users = User.all
+class UserController < ApplicationController
 
-			respond_to do |format|
-				format.html
-				format.xml { render :xml => @users }
-				format.xls { 
-				a = Array.new
-				columns = Array.new
-				@users.each do |u|
-					h = Hash.new
-					h[:name] 		= u.name 				#name is a method in the model that combines table columns: first_name, last_name
-					h[:studio] 	= u.studio.name #studio is an associated record, the studio to which this user belongs, adds the name of the studio
-					columns = [:name, :studio]
-					# add calculated hours, make up your own columns
-					u.hours_this_week.each do |hours|
-						h[hours.day_hours_occured.to_sym] = hours.number_of_hours
-						columns << hours.day_hours_occured.to_sym
-					end
-					a << h
+	def index
+		@users = User.all
+
+		respond_to do |format|
+			format.html
+			format.xml { render :xml => @users }
+			format.xls { 
+			a = Array.new
+			columns = Array.new
+			@users.each do |u|
+				h = Hash.new
+				h[:name] 		= u.name 				#name is a method in the model that combines table columns: first_name, last_name
+				h[:studio] 	= u.studio.name #studio is an associated record, the studio to which this user belongs, adds the name of the studio
+				columns = [:name, :studio]
+				# add calculated hours, make up your own columns
+				u.hours_this_week.each do |hours|
+					h[hours.day_hours_occured.to_sym] = hours.number_of_hours
+					columns << hours.day_hours_occured.to_sym
 				end
-				send_data a.to_xls(:upcase => true, :columns => columns)
-				}
+				a << h
 			end
+			send_data a.to_xls(:upcase => true, :columns => columns)
+			}
 		end
-
-		def show...
-		def new...
-		def edit...
-		def create...
-		def update...
-		def destroy...
-
 	end
+
+	def show...
+	def new...
+	def edit...
+	def create...
+	def update...
+	def destroy...
+
+end
 
 
 == Dependencies
 
-	None.
+None.
 
 
 == Install
 
-	./script/plugin install git://github.com/richardun/to_xls.git
+./script/plugin install git://github.com/richardun/to_xls.git
 
 
 == Note
