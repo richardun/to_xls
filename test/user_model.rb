@@ -16,6 +16,6 @@ class User
   end
   
   def is_old?
-    age > 40
+    age > 50
   end
 end

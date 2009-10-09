@@ -1,23 +1,30 @@
 = to_xls plugin
 
-This Rails plugin is the easiest way to export to Excel. It gives you the ability to call to_xls to a collection of activerecords (Array). The builder options are the same as to_json / to_xml, except for the :include.
-
-NOTE: IMO I would use the to_csv plugin; it's more compatible. (http://github.com/arydjmal/to_csv)
-
+This Rails plugin is the easiest way to export to Excel. It gives you the ability to call to_xls to an Array of Hashes. The builder options are the same as to_json / to_xml, except for the :include, :except, and :only.  Additionally, there is a :upcase option which allows you to change your columns to upper case.  Since you make the Hash, you can add whatever you want in the values or columns, name the columns whatever you want.  Why?  Because often you have data tables you want to export that are made up of modified and joined data from other tables when you display them, why not export that same modified data set?  Also, since the columns read hash names and humanize the values, you can make column names that are more readable, like ":first_name" and will display like:  "First name" or "FIRST NAME" (with :upcase option).
 
 == Usage
 
   @users = User.all
-
+	a = Array.new
+	@users.each do |u|
+		h = Hash.new
+		h[:name] 		= u.name 				#name is a method in the model that combines table columns: first_name, last_name
+		h[:studio] 	= u.studio.name #studio is an associated record, the studio to which this user belongs, adds the name of the studio
+		# add calculated hours, make up your own columns
+		u.hours_this_week.each do |hours|
+			h[hours.day_hours_occured.to_sym] = hours.number_of_hours
+		end
+		a << h
+	end
+	
   #
   # defaults are export headers and all fields
+	# (:only and :except options are not used since you include exactly what you want)
   #
 
-  @users.to_xls
-  @users.to_xls(:only => [:last_name, :role])
-  @users.to_xls(:headers => false)
-  @users.to_xls(:except => [:last_name, :role])
-  @users.to_xls(:except => :role, :methods => :admin?)
+  a.to_xls
+  a.to_xls(:headers => false)
+  a.to_xls(:upcase => true)
 
 
 == Real life example
@@ -37,7 +44,20 @@ In the controller where you want to export to excel, add the format.xls line.
 			respond_to do |format|
 				format.html
 				format.xml { render :xml => @users }
-				format.xls { send_data @users.to_xls }
+				format.xls { 
+				a = Array.new
+				@users.each do |u|
+					h = Hash.new
+					h[:name] 		= u.name 				#name is a method in the model that combines table columns: first_name, last_name
+					h[:studio] 	= u.studio.name #studio is an associated record, the studio to which this user belongs, adds the name of the studio
+					# add calculated hours, make up your own columns
+					u.hours_this_week.each do |hours|
+						h[hours.day_hours_occured.to_sym] = hours.number_of_hours
+					end
+					a << h
+				end
+				send_data a.to_xls(:upcase => true)
+				}
 			end
 		end
 
@@ -58,13 +78,13 @@ In the controller where you want to export to excel, add the format.xls line.
 
 == Install
 
-	./script/plugin install git://github.com/arydjmal/to_xls.git
+	./script/plugin install git://github.com/richardun/to_xls.git
 
 
 == Note
 
-Does not work on a single activerecord, ie, User.first.to_xls.
+Must pass in an Array with Hash elements
 
-Copyright (C) 2009 Richard Navarrete, released under the MIT license Based on 
+Copyright © 2009 Richard Navarrete, released under the MIT license Based on 
 
 Copyright (c) 2009 Ary Djmal, released under the MIT license
