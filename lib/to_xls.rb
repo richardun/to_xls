@@ -5,7 +5,7 @@ class Array
     
     if self.any?
       
-      columns = self.first.keys.map { |c| c.to_sym }
+      columns = options[:columns] ? options[:columns] : self.first.keys.map { |c| c.to_sym }
       
       if columns.any?
         unless options[:headers] == false

@@ -26,6 +26,12 @@ This Rails plugin is the easiest way to export to Excel. It gives you the abilit
   a.to_xls(:headers => false)
   a.to_xls(:upcase => true)
 
+== Options
+
+	options[:columns]	- include as an Array if you want to enforce the order of columns, otherwise will be random since it'll get the columns from a Hash.
+										- these need to be the same as your Hash keys or the values won't come through
+	options[:headers]	- whether or not to include headers
+	options[:upcase]	- whether or not to upcase the column headers
 
 == Real life example
 	
@@ -46,17 +52,20 @@ In the controller where you want to export to excel, add the format.xls line.
 				format.xml { render :xml => @users }
 				format.xls { 
 				a = Array.new
+				columns = Array.new
 				@users.each do |u|
 					h = Hash.new
 					h[:name] 		= u.name 				#name is a method in the model that combines table columns: first_name, last_name
 					h[:studio] 	= u.studio.name #studio is an associated record, the studio to which this user belongs, adds the name of the studio
+					columns = [:name, :studio]
 					# add calculated hours, make up your own columns
 					u.hours_this_week.each do |hours|
 						h[hours.day_hours_occured.to_sym] = hours.number_of_hours
+						columns << hours.day_hours_occured.to_sym
 					end
 					a << h
 				end
-				send_data a.to_xls(:upcase => true)
+				send_data a.to_xls(:upcase => true, :columns => columns)
 				}
 			end
 		end
