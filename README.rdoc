@@ -3,7 +3,7 @@
 This Rails plugin is the easiest way to export to Excel. It gives you the ability to call to_xls to an Array of Hashes. The builder options are the same as to_json / to_xml, except for the :include, :except, and :only.  Additionally, there is a :upcase option which allows you to change your columns to upper case.  Since you make the Hash, you can add whatever you want in the values or columns, name the columns whatever you want.  Why?  Because often you have data tables you want to export that are made up of modified and joined data from other tables when you display them, why not export that same modified data set?  Also, since the columns read hash names and humanize the values, you can make column names that are more readable, like ":first_name" and will display like:  "First name" or "FIRST NAME" (with :upcase option).
 
 == Usage
-
+<code>
   @users = User.all
 	a = Array.new
 	@users.each do |u|
@@ -25,7 +25,7 @@ This Rails plugin is the easiest way to export to Excel. It gives you the abilit
   a.to_xls
   a.to_xls(:headers => false)
   a.to_xls(:upcase => true)
-
+</code>
 == Options
 
 	options[:columns]	- include as an Array if you want to enforce the order of columns, otherwise will be random since it'll get the columns from a Hash. These need to be the same as your Hash keys or the values won't come through
@@ -42,7 +42,7 @@ In config/initializers/mime_types.rb register the custom mime type.
 	
 In the controller where you want to export to excel, add the format.xls line.
 
-
+<code>
 	class UserController < ApplicationController
 
 		def index
@@ -79,7 +79,7 @@ In the controller where you want to export to excel, add the format.xls line.
 		def destroy...
 
 	end
-
+</code>
 
 == Dependencies
 
